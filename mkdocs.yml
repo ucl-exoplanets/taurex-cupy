@@ -1,0 +1,52 @@
+site_name: TaurexCupy
+repo_url: https://github.com/ucl-exoplanets/TaurexCupy
+site_url: https://ucl-exoplanets.github.io/TaurexCupy
+site_description: GPU acceleration of TauREx using CuPy
+site_author: Ahmed F. Al-Refaie
+edit_uri: edit/main/docs/
+repo_name: ucl-exoplanets/TaurexCupy
+copyright: Maintained by <a href="https://ucl-exoplanets.com">ucl-exoplanets</a>.
+
+nav:
+  - Home: index.md
+  - Modules: modules.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["src/taurex_cupy"]
+theme:
+  name: material
+  feature:
+    tabs: true
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ucl-exoplanets/TaurexCupy
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/TaurexCupy
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
