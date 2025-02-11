@@ -17,6 +17,10 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+dependencies = [
+    "cupy>=13.3.0",
+    "taurex>=3.2.0",
+]
 
 [project.urls]
 Homepage = "https://ucl-exoplanets.github.io/TaurexCupy/"
@@ -113,4 +117,3 @@ skip_empty = true
 [tool.coverage.run]
 branch = true
 source = ["src"]
-
