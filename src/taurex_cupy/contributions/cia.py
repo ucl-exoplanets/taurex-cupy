@@ -162,5 +162,5 @@ class CIACuda(CudaContribution):
     @classmethod
     def input_keywords(cls):
         return [
-            "CIACuPy",
+            "CIACuda",
         ]

@@ -66,7 +66,7 @@ class RayleighCuda(CudaContribution):
     @classmethod
     def input_keywords(cls):
         return [
-            "RayleighCuPy",
+            "RayleighCuda",
         ]
 
     BIBTEX_ENTRIES = RayleighContribution.BIBTEX_ENTRIES

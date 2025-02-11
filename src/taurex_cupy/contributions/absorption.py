@@ -72,5 +72,5 @@ class AbsorptionCuda(CudaContribution):
     @classmethod
     def input_keywords(cls):
         return [
-            "AbsorptionCuPy",
+            "AbsorptionCuda",
         ]

@@ -117,3 +117,6 @@ skip_empty = true
 [tool.coverage.run]
 branch = true
 source = ["src"]
+
+[project.entry-points."taurex.plugins"]
+cupy = "taurex_cupy"

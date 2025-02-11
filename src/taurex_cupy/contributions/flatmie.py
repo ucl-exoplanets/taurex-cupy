@@ -169,4 +169,4 @@ class FlatMieCuda(CudaContribution):
     @classmethod
     def input_keywords(cls) -> tuple[str]:
         """Return input keywords for the contribution."""
-        return ("FlatMieCupy",)
+        return ("FlatMieCuda",)

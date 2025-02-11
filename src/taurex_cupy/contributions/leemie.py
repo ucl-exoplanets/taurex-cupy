@@ -210,6 +210,6 @@ class LeeMieCuda(CudaContribution):
     @classmethod
     def input_keywords(cls) -> tuple[str]:
         """Input keywords.""" ""
-        return ("LeeMieCupy",)
+        return ("LeeMieCuda",)
 
     BIBTEX_ENTRIES = LeeMieContribution.BIBTEX_ENTRIES
