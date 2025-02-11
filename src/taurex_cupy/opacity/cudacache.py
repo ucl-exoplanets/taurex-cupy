@@ -10,7 +10,7 @@ from taurex.log import Logger
 from ..cia.cudacia import CudaCIA
 from .cudaopacity import CudaOpacity
 
-T = t.TypeVar("T", bound=(CudaOpacity, CudaCIA))
+T = t.TypeVar("T", bound=CudaOpacity | CudaCIA)
 
 
 class CudaCache(t.Generic[T], Singleton):
