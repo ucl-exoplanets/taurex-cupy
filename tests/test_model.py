@@ -195,3 +195,56 @@ def test_flatmie_contribution(opac):
     np.testing.assert_allclose(wngrid, wngrid_gpu)
     np.testing.assert_allclose(tau, tau_gpu)
     np.testing.assert_allclose(flux, flux_gpu)
+
+
+def test_eclipse(opac):
+    from taurex.contributions import AbsorptionContribution
+    from taurex.model import EmissionModel
+    from taurex.temperature import Guillot2010
+
+    from taurex_cupy.contributions.absorption import AbsorptionCuda
+    from taurex_cupy.model.eclipse import EmissionCudaModel
+
+    tm_cpu = EmissionModel(temperature_profile=Guillot2010())
+    tm_gpu = EmissionCudaModel(temperature_profile=Guillot2010())
+    tm_cpu.add_contribution(AbsorptionContribution())
+    tm_gpu.add_contribution(AbsorptionCuda())
+
+    tm_cpu.build()
+    tm_gpu.build()
+
+    res = tm_cpu.model()
+    res_gpu = tm_gpu.model()
+
+    wngrid, flux, tau, extra = res
+    wngrid_gpu, flux_gpu, tau_gpu, extra_gpu = res_gpu
+    np.testing.assert_equal(tm_cpu._mu_quads, tm_gpu._mu_quads)
+    np.testing.assert_equal(tm_cpu._wi_quads, tm_gpu._wi_quads)
+    np.testing.assert_allclose(wngrid, wngrid_gpu)
+    np.testing.assert_allclose(tau, tau_gpu)
+    np.testing.assert_allclose(flux, flux_gpu, rtol=1e-5)
+
+
+def test_eclipse_non_cuda(opac):
+    from taurex.contributions import AbsorptionContribution
+    from taurex.model import EmissionModel
+
+    from taurex_cupy.model.eclipse import EmissionCudaModel
+
+    tm_cpu = EmissionModel()
+    tm_gpu = EmissionCudaModel()
+    tm_cpu.add_contribution(AbsorptionContribution())
+    tm_gpu.add_contribution(AbsorptionContribution())
+
+    tm_cpu.build()
+    tm_gpu.build()
+
+    res = tm_cpu.model()
+    res_gpu = tm_gpu.model()
+
+    wngrid, flux, tau, extra = res
+    wngrid_gpu, flux_gpu, tau_gpu, extra_gpu = res_gpu
+
+    np.testing.assert_allclose(wngrid, wngrid_gpu)
+    np.testing.assert_allclose(tau, tau_gpu)
+    np.testing.assert_allclose(flux, flux_gpu, rtol=1e-5)
