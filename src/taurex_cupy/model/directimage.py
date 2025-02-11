@@ -7,7 +7,7 @@ from taurex.model.directimage import compute_direct_image_final_flux
 from .eclipse import EmissionCudaModel
 
 
-class DirectImageModel(EmissionCudaModel):
+class DirectImageCudaModel(EmissionCudaModel):
     """A forward model for direct imaging of exo-planets."""
 
     def compute_final_flux(self, f_total: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:

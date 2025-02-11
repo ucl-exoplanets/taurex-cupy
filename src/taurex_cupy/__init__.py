@@ -5,6 +5,7 @@ from .contributions.flatmie import FlatMieCuda
 from .contributions.leemie import LeeMieCuda
 from .contributions.rayleigh import RayleighCuda
 from .contributions.simpleclouds import SimpleCloudsCuda
+from .model.directimage import DirectImageCudaModel
 from .model.eclipse import EmissionCudaModel
 from .model.transit import TransmissionCudaModel
 
@@ -17,5 +18,6 @@ __all__ = [
     "SimpleCloudsCuda",
     "EmissionCudaModel",
     "TransmissionCudaModel",
+    "DirectImageCudaModel",
     "CudaContribution",
 ]
