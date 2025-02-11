@@ -12,7 +12,7 @@ from taurex.output import OutputGroup
 from .cudacontrib import CudaContribution
 
 
-class SimpleCloudsContribution(CudaContribution):
+class SimpleCloudsCuda(CudaContribution):
     """
     Optically thick cloud deck up to a certain height
 
@@ -121,6 +121,6 @@ class SimpleCloudsContribution(CudaContribution):
     @classmethod
     def input_keywords(cls) -> tuple[str, str]:
         return (
-            "SimpleClouds",
-            "ThickClouds",
+            "SimpleCloudsCuda",
+            "ThickCloudsCuda",
         )

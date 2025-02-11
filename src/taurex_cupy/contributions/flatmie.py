@@ -12,7 +12,7 @@ from taurex.output import OutputGroup
 from .cudacontrib import CudaContribution
 
 
-class FlatMieContribution(CudaContribution):
+class FlatMieCuda(CudaContribution):
     """Computes a flat (gray) absorption contribution.
 
     Absorption is computed as a flat value between two pressures

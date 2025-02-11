@@ -59,7 +59,7 @@ class RayleighCuda(CudaContribution):
             sigma = rayleigh_sigma_from_name(gasname, gpu_wngrid)
 
             if sigma is not None:
-                final_sigma = sigma[None, :] * model.chemistry.get_gas_mix_profile(gasname)[:, None]
+                final_sigma = sigma[None, :] * cp.array(model.chemistry.get_gas_mix_profile(gasname)[:, None])
                 self.sigma_xsec = final_sigma
                 yield gasname, final_sigma
 
