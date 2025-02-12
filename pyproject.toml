@@ -39,6 +39,11 @@ dev = [
     "mkdocs>=1.4.2",
     "mkdocs-material>=8.5.10",
     "mkdocstrings[python]>=0.26.1",
+    "jupyterlab>=4.3.5",
+    "matplotlib>=3.9.4",
+    "ipympl>=0.9.6",
+    "numba>=0.60.0",
+    "line-profiler>=4.2.0",
 ]
 
 [build-system]
