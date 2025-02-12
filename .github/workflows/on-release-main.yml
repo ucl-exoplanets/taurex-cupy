@@ -30,7 +30,7 @@ jobs:
           path: pyproject.toml
 
   publish:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, cml, gpu]
     needs: [set-version]
     steps:
       - name: Check out
@@ -55,7 +55,7 @@ jobs:
 
   deploy-docs:
     needs: publish
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, cml, gpu]
     steps:
       - name: Check out
         uses: actions/checkout@v4
