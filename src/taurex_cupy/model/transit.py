@@ -12,7 +12,7 @@ from taurex.pressure import PressureProfile
 from taurex.stellar import Star
 from taurex.temperature import TemperatureProfile
 
-from taurex_cupy.contributions.cudacontrib import CudaContribution
+from ..contributions.cudacontrib import CudaContribution
 
 
 class TransmissionCudaModel(OneDForwardModel):

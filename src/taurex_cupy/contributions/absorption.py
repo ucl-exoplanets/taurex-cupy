@@ -4,9 +4,8 @@ import numpy as np
 import numpy.typing as npt
 from taurex.model import OneDForwardModel
 
-from taurex_cupy.opacity.cudaopacity import CudaOpacity
-
 from ..opacity.cudacache import CudaOpacityCache
+from ..opacity.cudaopacity import CudaOpacity
 from .cudacontrib import CudaContribution
 
 

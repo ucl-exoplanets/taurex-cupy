@@ -61,7 +61,7 @@ class CudaCIA(Logger):
         self._gpu_grid = cp.array(xsecgrid)
 
     def opacity(self, temperature, mix, wngrid=None):
-        from taurex_cupy.util import cuda_find_closest_pair, determine_grid_slice
+        from ..util import cuda_find_closest_pair, determine_grid_slice
 
         temperature = np.atleast_1d(temperature)
         mix = np.atleast_1d(mix)
