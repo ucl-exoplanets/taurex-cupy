@@ -6,20 +6,22 @@ import numpy.typing as npt
 
 
 def cuda_blackbody(lamb: npt.NDArray[np.floating], temperature: npt.NDArray[np.floating]) -> npt.NDArray[np.floating]:
-    """
-    Calculate the blackbody spectrum
+    r"""Compute blackbody spectrum using cuda.
 
-    Parameters
-    ----------
-    lamb : npt.NDArray[np.floating]
-        Wavelength grid
-    temperature : npt.NDArray[np.floating]
-        Temperature
+    This will compute the blackbody spectrum using the formula:
 
-    Returns
-    -------
-    npt.NDArray[np.floating]
-        Blackbody spectrum
+    $$
+    B_{\lambda} = \frac{2 \pi h c^2}{\lambda^5} \frac{1}{e^{\frac{hc}{\lambda k T}} - 1}
+    $$
+
+    Args:
+        lamb: Wavelength grid
+        temperature: Temperature grid
+
+    Returns:
+        Blackbody spectrum in W/m$^2$/micron/sr
+
+
     """
     from taurex.constants import KBOLTZ as k
     from taurex.constants import PLANCK as h

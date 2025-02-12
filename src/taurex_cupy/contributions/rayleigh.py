@@ -19,10 +19,14 @@ class RayleighCuda(CudaContribution):
 
     def __init__(self):
         super().__init__("Rayleigh")
+        self.sigmas = {}
+        self._current_grid = None
 
     def build(self, model: OneDForwardModel):
         super().build(model)
         self._mix_array = cp.zeros(shape=(model.nLayers,), dtype=np.float64)
+        self._current_grid = None
+        self.sigmas.clear()
 
     def prepare_each(
         self, model: OneDForwardModel, wngrid: npt.NDArray[np.floating]
@@ -49,14 +53,16 @@ class RayleighCuda(CudaContribution):
 
         self.debug("Preparing model with %s", wngrid.shape)
         self._ngrid = wngrid.shape[0]
-        gpu_wngrid = cp.asarray(wngrid, dtype=np.float64)
-
         molecules = model.chemistry.activeGases + model.chemistry.inactiveGases
+        if self._current_grid is None or not np.array_equal(self._current_grid, wngrid):
+            gpu_wngrid = cp.asarray(wngrid, dtype=np.float64)
+            for gasname in molecules:
+                self.sigmas[gasname] = rayleigh_sigma_from_name(gasname, gpu_wngrid)
 
         for gasname in molecules:
             if np.max(model.chemistry.get_gas_mix_profile(gasname)) == 0.0:
                 continue
-            sigma = rayleigh_sigma_from_name(gasname, gpu_wngrid)
+            sigma = self.sigmas.get(gasname, None)
 
             if sigma is not None:
                 final_sigma = sigma[None, :] * cp.array(model.chemistry.get_gas_mix_profile(gasname)[:, None])

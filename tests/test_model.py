@@ -109,9 +109,9 @@ def test_cia(opac):
     tm_cpu = TransmissionModel()
     tm_gpu = TransmissionCudaModel()
     tm_cpu.add_contribution(AbsorptionContribution())
-    tm_cpu.add_contribution(CIAContribution())
+    tm_cpu.add_contribution(CIAContribution(cia_pairs=["H2-H2"]))
     tm_gpu.add_contribution(AbsorptionCuda())
-    tm_gpu.add_contribution(CIACuda())
+    tm_gpu.add_contribution(CIACuda(cia_pairs=["H2-H2"]))
 
     tm_cpu.build()
     tm_gpu.build()

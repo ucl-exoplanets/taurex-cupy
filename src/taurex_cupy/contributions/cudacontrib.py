@@ -197,7 +197,7 @@ class CudaContribution(Contribution):
         wngrid: :obj:`array`
             Wavenumber grid
         """
-
+        del self.sigma_xsec
         self._ngrid = wngrid.shape[0]
         self._nlayers = model.nLayers
 

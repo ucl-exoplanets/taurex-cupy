@@ -153,6 +153,8 @@ class EmissionCudaModel(SimpleForwardModel):
 
     def build(self):
         super().build()
+        for contrib in self.contribution_list:
+            contrib.build(self)
         self._start_surface_K = cp.array(np.array([0]).astype(np.int32))
         self._end_surface_K = cp.array(np.array([self.nLayers]).astype(np.int32))
 
@@ -227,7 +229,6 @@ class EmissionCudaModel(SimpleForwardModel):
         tau_host = cpx.zeros_pinned(shape=(total_layers, wngrid_size), dtype=np.float64)
         if not self._fully_cuda:
             self.fallback_noncuda(layer_tau, dtau, wngrid, total_layers)
-
         for contrib in self.cuda_contributions:
             contrib.contribute(
                 self,
@@ -251,6 +252,7 @@ class EmissionCudaModel(SimpleForwardModel):
                 path_length=self._dz,
                 with_layer_offset=False,
             )
+
         integral_kernal = gen_partial_kernal(self._ngauss, self.nLayers, wngrid_size)
 
         THREAD_PER_BLOCK_X = 64

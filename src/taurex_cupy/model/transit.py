@@ -16,45 +16,7 @@ from taurex_cupy.contributions.cudacontrib import CudaContribution
 
 
 class TransmissionCudaModel(OneDForwardModel):
-    """
-
-    A forward model for transits using GPU acceleration
-
-    Parameters
-    ----------
-
-    planet: :class:`~taurex.data.planet.Planet`, optional
-        Planet model, default planet is Jupiter
-
-    star: :class:`~taurex.data.stellar.star.Star`, optional
-        Star model, default star is Sun-like
-
-    pressure_profile: :class:`~taurex.data.profiles.pressure.pressureprofile.PressureProfile`, optional
-        Pressure model, alternative is to set ``nlayers``, ``atm_min_pressure``
-        and ``atm_max_pressure``
-
-    temperature_profile: :class:`~taurex.data.profiles.temperature.tprofile.TemperatureProfile`, optional
-        Temperature model, default is an :class:`~taurex.data.profiles.temperature.isothermal.Isothermal`
-        profile at 1500 K
-
-    chemistry: :class:`~taurex.data.profiles.chemistry.chemistry.Chemistry`, optional
-        Chemistry model, default is
-        :class:`~taurex.data.profiles.chemistry.taurexchemistry.TaurexChemistry` with
-        ``H2O`` and ``CH4``
-
-    nlayers: int, optional
-        Number of layers. Used if ``pressure_profile`` is not defined.
-
-    atm_min_pressure: float, optional
-        Pressure at TOA. Used if ``pressure_profile`` is not defined.
-
-    atm_max_pressure: float, optional
-        Pressure at BOA. Used if ``pressure_profile`` is not defined.
-
-    num_streams: int, optional
-        Non-functional for now.
-
-    """
+    """A forward model for transits using GPU acceleration."""
 
     def __init__(
         self,
@@ -68,6 +30,20 @@ class TransmissionCudaModel(OneDForwardModel):
         atm_max_pressure: t.Optional[float] = 1e6,
         contributions: t.Optional[list[Contribution | CudaContribution]] = None,
     ):
+        """Initialise the model.
+
+        Args:
+            planet: Planet object
+            star: Star object
+            pressure_profile: Pressure profile for the atmosphere
+            temperature_profile: Temperature profile for the atmosphere
+            chemistry: Chemical model
+            nlayers: Number of layers
+            atm_min_pressure: Minimum pressure (If pressure profile is not set)
+            atm_max_pressure: Maximum pressure (If pressure profile is not set)
+            contributions: List of contributions
+
+        """
         super().__init__(
             name=self.__class__.__name__,
             planet=planet,
@@ -81,8 +57,16 @@ class TransmissionCudaModel(OneDForwardModel):
             contributions=contributions,
         )
 
-    def compute_path_length(self, dz) -> list[npt.NDArray[np.float64]]:
-        """Compute path length for each layer, new method."""
+    def compute_path_length(self, dz: npt.NDArray[np.floating]) -> list[npt.NDArray[np.float64]]:
+        r"""Compute path length for each layer, new method.
+
+        Args:
+            dz: $\Delta z$ of the layer (altitude)
+
+        Returns:
+            list: Path length for each layer
+
+        """
         from taurex.util.geometry import parallel_vector
 
         altitude_boundaries = self.altitude_boundaries
@@ -104,21 +88,39 @@ class TransmissionCudaModel(OneDForwardModel):
         #
 
     @property
-    def cuda_contributions(self):
+    def cuda_contributions(self) -> None:
+        """Get contributions that use cuda."""
         return [c for c in self.contribution_list if isinstance(c, CudaContribution)]
 
     @property
-    def non_cuda_contributions(self):
+    def non_cuda_contributions(self) -> None:
+        """Get contributions that do not use cuda."""
         return [c for c in self.contribution_list if not isinstance(c, CudaContribution)]
 
-    def build(self):
+    def build(self) -> None:
+        """Build the model."""
         super().build()
+        for contrib in self.contribution_list:
+            contrib.build(self)
         self._startK = cp.array(np.array([0 for x in range(self.nLayers)]).astype(np.int32))
         self._endK = cp.array(np.array([self.nLayers - x for x in range(self.nLayers)]).astype(np.int32))
         self._density_offset = cp.array(np.array(list(range(self.nLayers))).astype(np.int32))
+
         # self._tau_buffer= drv.pagelocked_zeros(shape=(self.nativeWavenumberGrid.shape[-1], self.nLayers,),dtype=np.float64)
 
-    def path_integral(self, wngrid: npt.NDArray[np.floating], return_contrib: bool):
+    def path_integral(
+        self, wngrid: npt.NDArray[np.floating], return_contrib: bool
+    ) -> tuple[npt.NDArray[np.floating], npt.NDArray[np.floating]]:
+        r"""Compute the path integral for the model.
+
+        Args:
+            wngrid: Wavenumber grid
+            return_contrib: Return contributions
+
+        Returns:
+            tuple: $(R_p/R_s)^2$ and optical depth
+
+        """
         total_layers = self.nLayers
 
         dz = self.deltaz
@@ -135,9 +137,10 @@ class TransmissionCudaModel(OneDForwardModel):
             shape=(total_layers, wngrid_size),
             dtype=np.float64,
         )
+
         tau_host = cpx.zeros_pinned(shape=(total_layers, wngrid_size), dtype=np.float64)
         if not self._fully_cuda:
-            tau[...] = cp.array(self.fallback_noncuda(total_layers, cpu_dl, self.densityProfile, dz))
+            tau.set(self.fallback_noncuda(total_layers, cpu_dl, self.densityProfile, dz))
 
         for contrib in self.cuda_contributions:
             contrib.contribute(
@@ -153,13 +156,32 @@ class TransmissionCudaModel(OneDForwardModel):
 
         rprs, tau = self.compute_absorption(tau, cp.array(dz))
         tau.get(out=tau_host)
-
+        # cp.cuda.runtime.deviceSynchronize()
         final_rprs = rprs.get()
-        final_tau = np.copy(tau_host)
 
-        return final_rprs, final_tau
+        return final_rprs, tau_host
 
-    def fallback_noncuda(self, total_layers, path_length, density_profile, dz):
+    def fallback_noncuda(
+        self,
+        total_layers: int,
+        path_length: npt.NDArray[np.floating],
+        density_profile: npt.NDArray[np.floating],
+        dz: npt.NDArray[np.floating],
+    ) -> npt.NDArray[np.floating]:
+        """Fallback for non-cuda contributions.
+
+        This will compute them on the CPU before copying them to the GPU.
+
+        Args:
+            total_layers: Total layers
+            path_length: Path length
+            density_profile: Density profile
+            dz: Delta altitude of the layer
+
+        Returns:
+            Optical depth
+
+        """
         tau = np.zeros(shape=(total_layers, self._ngrid))
         for layer in range(total_layers):
             self.debug("Computing layer %s", layer)
@@ -172,8 +194,18 @@ class TransmissionCudaModel(OneDForwardModel):
                 contrib.contribute(self, 0, endK, layer, layer, density_profile, tau, path_length=dl)
         return tau
 
-    def compute_absorption(self, tau, dz):
-        tau = cp.exp(-tau)
+    def compute_absorption(self, tau: cp.ndarray, dz: cp.ndarray) -> tuple[cp.ndarray, cp.ndarray]:
+        r"""Compute the absorption.
+
+        Args:
+            tau: Tau
+            dz: $\Delta z$ of the layer (altitude)
+
+        Returns:
+            tuple: $(R_p/R_s)^2$ and tau
+
+        """
+        cp.exp(-tau, out=tau)
         ap = cp.array(self.altitudeProfile[:, None])
         pradius = self._planet.fullRadius
         sradius = self._star.radius
