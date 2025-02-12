@@ -1,5 +1,5 @@
 [project]
-name = "TaurexCupy"
+name = "taurex-cupy"
 version = "0.0.1"
 description = "GPU acceleration of TauREx using CuPy"
 authors = [{ name = "Ahmed F. Al-Refaie", email = "ahmed.al-refaie@ucl.ac.uk" }]
@@ -16,6 +16,19 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
+    'Intended Audience :: Developers',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: POSIX',
+    'Operating System :: POSIX :: Linux',
+    'Operating System :: Unix',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Topic :: Scientific/Engineering',
+    'Topic :: Software Development :: Libraries',
+    'Environment :: GPU',
+    'Environment :: GPU :: NVIDIA CUDA'
 ]
 dependencies = [
     "cupy>=13.3.0",
@@ -25,9 +38,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://ucl-exoplanets.github.io/TaurexCupy/"
-Repository = "https://github.com/ucl-exoplanets/TaurexCupy"
-Documentation = "https://ucl-exoplanets.github.io/TaurexCupy/"
+Homepage = "https://ucl-exoplanets.github.io/taurex-cupy/"
+Repository = "https://github.com/ucl-exoplanets/taurex-cupy"
+Documentation = "https://ucl-exoplanets.github.io/taurex-cupy/"
 
 [dependency-groups]
 dev = [

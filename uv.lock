@@ -3455,7 +3455,7 @@ wheels = [
 ]
 
 [[package]]
-name = "taurexcupy"
+name = "taurex-cupy"
 version = "0.0.1"
 source = { editable = "." }
 dependencies = [
