@@ -24,7 +24,6 @@ def opac():
     from taurex.opacity.fakeopacity import FakeOpacity
 
     fo = FakeOpacity("H2O", wn_res=WNRES)
-    fo._xsec_grid *= 1e-25
     fc = FakeCIA(("H2", "H2"), wn_res=WNRES)
     from taurex.cache import CIACache, OpacityCache
 
