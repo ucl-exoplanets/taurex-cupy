@@ -1,6 +1,6 @@
 [project]
 name = "taurex-cupy"
-version = "0.0.1"
+version = "0.0.2"
 description = "GPU acceleration of TauREx using CuPy"
 authors = [{ name = "Ahmed F. Al-Refaie", email = "ahmed.al-refaie@ucl.ac.uk" }]
 readme = "README.md"
