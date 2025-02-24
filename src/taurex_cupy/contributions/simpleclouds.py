@@ -59,7 +59,7 @@ class SimpleCloudsCuda(CudaContribution):
         path_length: t.Optional[npt.NDArray[np.float64]] = None,
     ):
         """Contribute the cloud opacity to the optical depth."""
-        tau[layer] += self.sigma_xsec[layer, :]
+        tau += self.sigma_xsec
 
     def prepare_each(
         self, model: OneDForwardModel, wngrid: npt.NDArray[np.float64]
